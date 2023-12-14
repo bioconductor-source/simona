@@ -7,13 +7,13 @@ output:
     css: main.css
     toc: true
 vignette: >
-  %\VignetteIndexEntry{9. Shiny app}
+  %\VignetteIndexEntry{09. Shiny app}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 
-The function `dag_shiny()` generates a Shiny application that allows interactive analysis on the ontology.
+The function `dag_shiny()` generates a Shiny application that allows interactive manipulation on the ontology.
 
 ```{r, eval = FALSE}
 library(simona)
