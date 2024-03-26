@@ -16,6 +16,7 @@
 #' @slot source The source of the ontology. A character scalar only used as a mark of the returned object.
 #' @slot root An integer scalar of the root term.
 #' @slot leaves An integer vector of the indicies of leaf terms.
+#' @slot alternative_terms A named character vector of mappings between alternative terms to DAG terms.
 #' @slot tpl_sorted An integer vector of reordered term indices which has been topologically sorted in the DAG. Terms are sorted first by the depth (maximal
 #'       distance from root), then the number of child terms, then the number of parent terms, and last the term names.
 #' @slot tpl_pos The position of the original term in the topologically sorted path (similar as the rank), e.g. the value of the first element in the vector
@@ -45,6 +46,7 @@ ontology_DAG = setClass("ontology_DAG",
 		      "source" = "character",
 		      "root" = "integer",
 		      "leaves" = "integer",
+		      "alternative_terms" = "character",
 		      "tpl_sorted" = "integer",
 		      "tpl_pos" = "integer",
 		      "annotation" = "list",
@@ -71,6 +73,11 @@ ontology_DAG = setClass("ontology_DAG",
 #'       will be an error that lists all cyclic paths.
 #' @param remove_rings There might be rings that are isolated to the main DAG where there are no roots on the rings, thus they cannot be attached to the main DAG. If the value
 #'        of `remove_rings` is set to `TRUE`, such rings are removed.
+#' @param alternative_terms A named list or vector that contains mappings from alternative term IDs to terms used in the DAG. In an ontology, there
+#'            might be old terms IDs marked as "replaced_by", "consider" or "alt_id" in ".obo" file. You can provide mappings from old term iDs to current term IDs with this argument. 
+#'            If it is a one-to-one mapping, the mapping
+#'            can be a named vector where alternative term IDs are names and DAG term IDs are values. It it is a one-to-many mapping, the variable
+#'            should be a named list where each member vector will first be matched to the DAG terms. If the mapping is still one-to-many, the first one is selected.
 #' @param verbose Whether to print messages.
 #' 
 #' @return An `ontology_DAG` object.
@@ -109,7 +116,7 @@ ontology_DAG = setClass("ontology_DAG",
 #' dag = create_ontology_DAG(c("a-b", "a-c", "b-c", "b-d", "c-e", "e-f"))
 create_ontology_DAG = function(parents, children, relations = NULL, relations_DAG = NULL,
 	source = "Ontology", annotation = NULL, remove_cyclic_paths = FALSE, remove_rings = FALSE,
-	verbose = simona_opt$verbose) {
+	alternative_terms = list(), verbose = simona_opt$verbose) {
 
 	if(missing(children)) {
 		if(any(grepl("\\s+-\\s+", parents))) {
@@ -212,7 +219,35 @@ create_ontology_DAG = function(parents, children, relations = NULL, relations_DA
 			stop("`relations_DAG` should be constructed by `create_ontology_DAG()`.")
 		}
 	}
-		
+
+	alt_var = character(0)
+	if(length(alternative_terms)) {
+		# change alternative_terms to a named vector
+		if(is.atomic(alternative_terms)) {
+			if(is.null(names(alternative_terms))) {
+				stop("`alternative_terms` should be a named vector.")
+			}
+
+			alt_var = alternative_terms[alternative_terms %in% terms]
+			alt_var = alt_var[!is.na(alt_var)]
+		} else if(is.list(alternative_terms)) {
+			if(is.null(names(alternative_terms))) {
+				stop("`alternative_terms` should be a named list.")
+			}
+			alternative_terms = lapply(alternative_terms, function(x) {
+				x = x[!is.na(x)]
+				intersect(x, terms)
+			})
+			alternative_terms = alternative_terms[sapply(alternative_terms, length) > 0]
+
+			if(length(alternative_terms)) {
+				alt_var = sapply(alternative_terms, function(x) x[1])
+			}
+		} else {
+			stop("`alternative_terms` should be a named vector of a named list.")
+		}
+	}
+
 	dag = ontology_DAG(
 		terms = terms,
 		n_terms = length(terms),
@@ -224,6 +259,7 @@ create_ontology_DAG = function(parents, children, relations = NULL, relations_DA
 		source = source,
 		root = root,
 		leaves = leaves,
+		alternative_terms = alt_var,
 		term_env = new.env(parent = emptyenv())
 	)
 
@@ -259,6 +295,7 @@ create_ontology_DAG = function(parents, children, relations = NULL, relations_DA
 				source = source,
 				root = root,
 				leaves = leaves,
+				alternative_terms = alt_var,
 				term_env = new.env(parent = emptyenv())
 			)
 		} else {
@@ -327,6 +364,15 @@ singleton_ontology = function(term) {
 	)
 }
 
+#' Add annotations to the DAG object
+#' 
+#' @param dag An `ontology_DAG` object.
+#' @param annotation A list of character vectors which contain items annotated to the terms. Names of the list should be the term names. In the DAG, items
+#'                   annotated to a term will also be annotated to its parents. Such merging
+#'                   is applied automatically in the package.
+#' 
+#' @return An `ontology_DAG` object.
+#' @export
 add_annotation = function(dag, annotation) {
 	if(!is.null(annotation)) {
 		annotation = lapply(annotation, as.character)
@@ -435,102 +481,6 @@ setMethod("show",
 	}
 )
 
-
-#' Create the ontology_DAG object from the GO.db package
-#' 
-#' @param namespace One of "BP", "CC" and "MF".
-#' @param relations Types of the GO term relations. In the **GO.db** package, the GO term relations can be "is_a", "part_of",
-#'               "regulates", "negatively regulates", "positively regulates". Note since "regulates" is a parent relation
-#'               of "negatively regulates", "positively regulates", if "regulates" is selected, "negatively regulates" and "positively regulates"
-#'               are also selected. Note "is_a" is always included.
-#' @param org_db The name of the organism package or the corresponding database object, e.g. `"org.Hs.eg.db"` or 
-#'            directly the [`org.Hs.eg.db::org.Hs.eg.db`] object for human, then the gene annotation to GO terms will be added
-#'            to the object. For other non-model organisms, consider to use the **AnnotationHub** package to find one.
-#' @param evidence_code A vector of evidence codes for gene annotation to GO terms. See \url{https://geneontology.org/docs/guide-go-evidence-codes/}.
-#' @param verbose Whether to print messages.
-#' 
-#' @return An `ontology_DAG` object.
-#' @export
-#' @importFrom utils getFromNamespace
-#' @examples
-#' dag = create_ontology_DAG_from_GO_db()
-#' dag
-create_ontology_DAG_from_GO_db = function(namespace = "BP", relations = "part of", org_db = NULL, 
-	evidence_code = NULL, verbose = simona_opt$verbose) {
-
-	check_pkg("GO.db", bioc = TRUE)
-
-	if(namespace == "BP") {
-		df = AnnotationDbi::toTable(GO.db::GOBPCHILDREN)
-	} else if(namespace == "CC") {
-		df = AnnotationDbi::toTable(GO.db::GOCCCHILDREN)
-	} else if(namespace == "MF") {
-		df = AnnotationDbi::toTable(GO.db::GOMFCHILDREN)
-	} else {
-		stop("Value of `namespace` can only be one of 'BP', 'MF' and 'CC'.")
-	}
-
-	l = df[, 3] == "isa"
-	df[l, 3] = "is_a"
-	df[, 3] = gsub(" ", "_", df[, 3])
-
-	if(length(relations) == 0) {
-		relations = character(0)
-	}
-
-	if(identical(relations, NA)) {
-		relations = character(0)
-	}
-
-	relations = c("is_a", relations)
-	relations = normalize_relation_type(relations)
-	if("regulates" %in% relations) {
-		relations = c(relations, "negatively_regulates", "positively_regulates")
-	}
-	df = df[df[, 3] %in% relations, , drop = FALSE]
-
-	if(verbose) {
-		message("relations: ", paste(relations, collapse = ", "))
-	}
-
-	if(!is.null(org_db)) {
-		if(is.character(org_db)) {
-			check_pkg(org_db, bioc = TRUE)
-			org_db = getFromNamespace(org_db, ns = org_db)
-		}
-	
-		suppressMessages(tb <- AnnotationDbi::select(org_db, keys = AnnotationDbi::keys(org_db), columns = c("GO", "EVIDENCE", "ONTOLOGY")))
-		tb = tb[tb$ONTOLOGY == namespace, , drop = FALSE]
-		if(!is.null(evidence_code)) {
-			tb = tb[tb$EVIDENCE %in% evidence_code, , drop = FALSE]
-			if(row(tb) == 0) {
-				stop("No annotation left after filtering by the evidence codes.")
-			}
-		}
-		tb = tb[, c(1, which(colnames(tb) == "GO")), drop = FALSE]
-		annotation = split(tb[, 1], tb[, 2])
-		annotation = lapply(annotation, unique)
-		annotation = lapply(annotation, as.character)
-	} else {
-		annotation = NULL
-	}
-
-	relations_DAG = create_ontology_DAG(c("regulates", "regulates"), c("negatively regulates", "positively regulates"))
-
-	go_db_version = read.dcf(system.file("DESCRIPTION", package = "GO.db"))[1, "Version"]
-	dag = create_ontology_DAG(parents = df[, 2], children = df[, 1], relations = df[, 3], relations_DAG = relations_DAG,
-		annotation = annotation, source = paste0("GO ", namespace, " / GO.db package ", go_db_version))
-
-	go = GO.db::GOTERM[dag@terms]
-	meta = data.frame(id = AnnotationDbi::GOID(go),
-		        name = AnnotationDbi::Term(go),
-		        definition = AnnotationDbi::Definition(go))
-	rownames(meta) = dag@terms
-
-	mcols(dag) = meta
-
-	dag
-}
 
 #' Names of all terms
 #' 
@@ -712,7 +662,7 @@ setMethod("mcols<-",
 
 	rownames(df) = x@terms
 
-	x@elementMetadata = df
+	x@elementMetadata = as(df, "DataFrame")
 	invisible(x)
 })
 
@@ -740,8 +690,12 @@ dag_namespaces = function(dag) {
 #' @export
 #' @import igraph
 create_ontology_DAG_from_igraph = function(g, relations = NULL, verbose = simona_opt$verbose) {
-	edges = get.edgelist(g)
 
+	if(!is_dag(g)) {
+		stop("The graph object should be a DAG.")
+	}
+
+	edges = get.edgelist(g)
 	create_ontology_DAG(as.character(edges[, 1]), as.character(edges[, 2]), relations = relations, 
 		source = "igraph object", verbose = verbose)
 }
