@@ -710,5 +710,5 @@ create_ontology_DAG_from_igraph = function(g, relations = NULL, verbose = simona
 #' @return A logical vector.
 #' @export
 dag_has_terms = function(dag, terms) {
-	terms %in% dag@terms
+	terms %in% c(dag@terms, names(dag@alternative_terms))
 }
