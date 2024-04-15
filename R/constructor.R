@@ -288,6 +288,7 @@ create_ontology_DAG = function(parents, children, relations = NULL, relations_DA
 			dag = ontology_DAG(
 				terms = terms,
 				n_terms = length(terms),
+				n_relations = sum(vapply(lt_children, length, FUN.VALUE = integer(1))),
 				lt_parents = lt_parents,
 				lt_children = lt_children,
 				lt_children_relations = lt_relations, 
@@ -709,5 +710,5 @@ create_ontology_DAG_from_igraph = function(g, relations = NULL, verbose = simona
 #' @return A logical vector.
 #' @export
 dag_has_terms = function(dag, terms) {
-	terms %in% dag@terms
+	terms %in% c(dag@terms, names(dag@alternative_terms))
 }

@@ -162,5 +162,14 @@ simona_opt = GlobalOptions::setGlobalOptions(
 		.class = "logical",
 		.length = 1
 	),
-	robot_jar = NULL
+	robot_jar = list(
+		.value = NULL,
+		.validate = function(x) {
+			if(is.null(x)) {
+				TRUE
+			} else {
+				file.exists(x)
+			}
+		}
+	)
 )

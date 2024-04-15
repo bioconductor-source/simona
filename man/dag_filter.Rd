@@ -10,7 +10,8 @@ dag_filter(
   relations = NULL,
   root = NULL,
   leaves = NULL,
-  mcols_filter = NULL
+  mcols_filter = NULL,
+  namespace = NULL
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ a super root will be automatically added.}
 \item{leaves}{A vector of leaf terms. Only these with their ancestor terms will be kept.}
 
 \item{mcols_filter}{Filtering on columns in the meta data frame.}
+
+\item{namespace}{The prefix before ":" of the term IDs.}
 }
 \value{
 An \code{ontology_DAG} object.
