@@ -864,8 +864,13 @@ IntegerVector cpp_dag_shortest_dist_from_ancestors(S4 dag, int to_node, LogicalV
 
 // -----------------------------
 // cyclic node
-void _go_child(List lt_children, int node, IntegerVector path, CharacterVector terms, List& cyclic_paths) {
+void _go_child(List lt_children, int node, IntegerVector path, CharacterVector terms, List& cyclic_paths, LogicalVector checked) {
 	int i_node = node - 1;
+
+	if(checked[i_node]) {
+		return;
+	}
+
 	if(path.size() > 0) {
 		for(int i = 0; i < path.size(); i ++) {
 			if(path[i] == node) {
@@ -889,8 +894,10 @@ void _go_child(List lt_children, int node, IntegerVector path, CharacterVector t
 	for(int i = 0; i < children.size(); i ++) {
 		IntegerVector path2 = clone(path);
 		path2.push_back(node);
-		_go_child(lt_children, children[i], path2, terms, cyclic_paths);
+		_go_child(lt_children, children[i], path2, terms, cyclic_paths, checked);
 	}
+
+	checked[i_node] = true;
 }
 
 // [[Rcpp::export]]
@@ -902,9 +909,10 @@ List cpp_check_cyclic_node(S4 dag, int node = -1) {
 	CharacterVector terms = dag.slot("terms");
 
 	List cyclic_paths;
+	LogicalVector checked(terms.size(), false);
 
 	IntegerVector path(0);
-	_go_child(lt_children, node, path, terms, cyclic_paths);
+	_go_child(lt_children, node, path, terms, cyclic_paths, checked);
 
 	return cyclic_paths;
 }
