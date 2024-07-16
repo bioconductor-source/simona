@@ -85,7 +85,7 @@ With the following columns in the metadata data frame:
 Import from an `.obo` file:
 
 ```r
-dag = import_obo("https://raw.githubusercontent.com/Planteome/plant-ontology/master/po.obo")
+dag = import_obo("https://purl.obolibrary.org/obo/po.obo")
 dag
 ```
 
