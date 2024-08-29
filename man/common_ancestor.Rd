@@ -9,6 +9,7 @@
 \alias{max_ancestor_v}
 \alias{max_ancestor_id}
 \alias{max_ancestor_path_sum}
+\alias{CA_terms}
 \title{Various types of common ancestors}
 \usage{
 MICA_term(
@@ -53,6 +54,8 @@ max_ancestor_path_sum(
   distance = "longest",
   verbose = simona_opt$verbose
 )
+
+CA_terms(dag, term1, term2, in_labels = TRUE)
 }
 \arguments{
 \item{dag}{An \code{ontology_DAG} object.}
@@ -71,6 +74,10 @@ the longest distance of shortest distance to the two terms. Possible values are 
 \item{value}{A numeric vector. The elements should corrrespond to terms in \code{dag_all_terms()} (should have the same length as the number of terms in the DAG).}
 
 \item{add_v}{Values to be added along the path to the MICA or LCA. The same format as \code{value}.}
+
+\item{term1}{A single term ID.}
+
+\item{term2}{A single term ID.}
 }
 \value{
 \itemize{
@@ -81,6 +88,7 @@ the longest distance of shortest distance to the two terms. Possible values are 
 \item \code{NCA_term()} returns an integer or a character matrix of the NCA term depending on the value of \code{in_labels}. The shortest distance from NCA terms can be calculated by \code{\link[=shortest_distances_via_NCA]{shortest_distances_via_NCA()}}.
 \item \code{max_ancestor_v()} returns a numeric matrix.
 \item \code{max_ancestor_id()} returns an integer or a character matrix.
+\item \code{CA_terms()} returns a vector of term IDs.
 }
 }
 \description{
@@ -111,4 +119,5 @@ MICA_IC(dag, letters[1:6], "IC_universal")
 LCA_term(dag, letters[1:6])
 LCA_depth(dag, letters[1:6])
 NCA_term(dag, letters[1:6])
+CA_terms(dag, "c", "d")
 }

@@ -116,17 +116,16 @@ IntegerMatrix cpp_get_term_annotations(S4 dag, IntegerVector nodes) {
 	for(int i = 0; i < m; i ++) {
 		_find_offspring(lt_children, nodes[i]-1, l_offspring, true);  //include self
 
-		LogicalVector l_anno(n_all_anno, false);
+		// LogicalVector l_anno(n_all_anno, false);
 		for(int j = 0; j < n; j ++) {
 			if(l_offspring[j]) {
 				IntegerVector anno = lt_annotation[j];
 				for(int k = 0; k < anno.size(); k ++) {
-					l_anno[anno[k]-1] = true;
+					// l_anno[anno[k]-1] = true;
 					mat(i, anno[k]-1) = 1;
 				}
 			}
 		}
-
 		reset_logical_vector_to_false(l_offspring);
 	}
 

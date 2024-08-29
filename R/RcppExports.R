@@ -297,3 +297,23 @@ cpp_match_index <- function(ind1, ind2) {
     .Call(`_simona_cpp_match_index`, ind1, ind2)
 }
 
+cross_sum <- function(x) {
+    .Call(`_simona_cross_sum`, x)
+}
+
+cross_multiply <- function(x) {
+    .Call(`_simona_cross_multiply`, x)
+}
+
+cross_minus <- function(x) {
+    .Call(`_simona_cross_minus`, x)
+}
+
+cross_max <- function(x) {
+    .Call(`_simona_cross_max`, x)
+}
+
+cross_min <- function(x) {
+    .Call(`_simona_cross_min`, x)
+}
+

@@ -5,28 +5,32 @@ navbar:
   left:
     - text: "Articles"
       menu:
-        - text: "ontology_DAG: a class for ontology data"
+        - text: "1.ontology_DAG: a class for ontology data"
           href: articles/v01_dag.html
-        - text: "Gene Ontology"
+        - text: "2.Gene Ontology"
           href: articles/v02_GO.html
-        - text: "Import ontology files"
+        - text: "3.Import ontology files"
           href: articles/v03_import.html
-        - text: "Information content"
+        - text: "4.Information content"
           href: articles/v04_information_content.html
-        - text: "Term similarity"
+        - text: "5.Term similarity"
           href: articles/v05_term_similarity.html
-        - text: "Similarity between two groups of terms"
+        - text: "6.Similarity between two groups of terms"
           href: articles/v06_group_similarity.html
-        - text: "Visualize DAGs"
+        - text: "7.Visualize DAGs"
           href: articles/v07_dag_visualization.html
-        - text: "Random DAGs"
+        - text: "8.Random DAGs"
           href: articles/v08_random.html
-        - text: "Shiny app"
+        - text: "9.Shiny app"
           href: articles/v09_shiny.html
-        - text: "Functional enrichment"
+        - text: "10.Functional enrichment"
           href: articles/v10_enrichment.html
     - text: "Reference"
       href: reference/index.html
+    - text: "Supplementary"
+      href: https://jokergoo.github.io/simona_supplementary/
+    - text: "OBO Foundry gallery"
+      href: https://jokergoo.github.io/simona_supplementary/suppl6_OBOFoundry_gallery/OBOFoundry_viz.html
 
 
 template:

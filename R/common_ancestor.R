@@ -34,6 +34,7 @@
 #' - `NCA_term()` returns an integer or a character matrix of the NCA term depending on the value of `in_labels`. The shortest distance from NCA terms can be calculated by [`shortest_distances_via_NCA()`].
 #' - `max_ancestor_v()` returns a numeric matrix.
 #' - `max_ancestor_id()` returns an integer or a character matrix.
+#' - `CA_terms()` returns a vector of term IDs.
 #' 
 #' @rdname common_ancestor
 #' @export
@@ -46,6 +47,7 @@
 #' LCA_term(dag, letters[1:6])
 #' LCA_depth(dag, letters[1:6])
 #' NCA_term(dag, letters[1:6])
+#' CA_terms(dag, "c", "d")
 MICA_term = function(dag, terms, IC_method, in_labels = TRUE, distance = "longest", verbose = simona_opt$verbose) {
 	ic = term_IC(dag, IC_method, verbose = verbose)
 	max_ancestor_id(dag, terms, ic, in_labels = in_labels, distance = distance, verbose = verbose)
@@ -185,3 +187,12 @@ max_ancestor_path_sum = function(dag, terms, value, add_v, distance = "longest",
 	sv
 }
 
+#' @rdname common_ancestor
+#' @param term1 A single term ID.
+#' @param term2 A single term ID.
+#' @export
+CA_terms = function(dag, term1, term2, in_labels = TRUE) {
+	ancestors1 = dag_ancestors(dag, term1, include_self = TRUE, in_labels = in_labels)
+	ancestors2 = dag_ancestors(dag, term2, include_self = TRUE, in_labels = in_labels)
+	intersect(ancestors1, ancestors2)
+}

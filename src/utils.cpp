@@ -137,3 +137,105 @@ IntegerVector _order(IntegerVector x) {
 	IntegerVector sorted = clone(x).sort();
 	return match(sorted, x) - 1;
 }
+
+
+// [[Rcpp::export]]
+NumericMatrix cross_sum(NumericVector x) {
+	int n = x.size();
+	NumericMatrix m(n, n);
+
+	for(int i = 0; i < n; i ++) {
+		m(i, i) = x[i] + x[i];
+	}
+
+	if(n > 1) {
+		for(int i = 0; i < n-1; i ++) {
+			for(int j = i+1; j < n; j ++) {
+				m(j, i) = m(i, j) = x[i] + x[j];
+			}
+		}
+	}
+
+	return m;
+}
+
+// [[Rcpp::export]]
+NumericMatrix cross_multiply(NumericVector x) {
+	int n = x.size();
+	NumericMatrix m(n, n);
+
+	for(int i = 0; i < n; i ++) {
+		m(i, i) = x[i] * x[i];
+	}
+
+	if(n > 1) {
+		for(int i = 0; i < n-1; i ++) {
+			for(int j = i+1; j < n; j ++) {
+				m(i, j) = m(j, i) = x[i] * x[j];
+			}
+		}
+	}
+
+	return m;
+}
+
+// [[Rcpp::export]]
+NumericMatrix cross_minus(NumericVector x) {
+	int n = x.size();
+	NumericMatrix m(n, n);
+
+	for(int i = 0; i < n; i ++) {
+		m(i, i) = 0;
+	}
+
+	if(n > 1) {
+		for(int i = 0; i < n-1; i ++) {
+			for(int j = i+1; j < n; j ++) {
+				m(i, j) = x[i] - x[j];
+				m(j, i) = -m(i, j);
+			}
+		}
+	}
+
+	return m;
+}
+
+// [[Rcpp::export]]
+NumericMatrix cross_max(NumericVector x) {
+	int n = x.size();
+	NumericMatrix m(n, n);
+
+	for(int i = 0; i < n; i ++) {
+		m(i, i) = x[i];
+	}
+
+	if(n > 1) {
+		for(int i = 0; i < n-1; i ++) {
+			for(int j = i+1; j < n; j ++) {
+				m(j, i) = m(i, j) = x[i] > x[j] ? x[i] : x[j];
+			}
+		}
+	}
+
+	return m;
+}
+
+// [[Rcpp::export]]
+NumericMatrix cross_min(NumericVector x) {
+	int n = x.size();
+	NumericMatrix m(n, n);
+
+	for(int i = 0; i < n; i ++) {
+		m(i, i) = x[i];
+	}
+
+	if(n > 1) {
+		for(int i = 0; i < n-1; i ++) {
+			for(int j = i+1; j < n; j ++) {
+				m(j, i) = m(i, j) = x[i] < x[j] ? x[i] : x[j];
+			}
+		}
+	}
+
+	return m;
+}
