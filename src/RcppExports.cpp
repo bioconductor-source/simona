@@ -951,6 +951,61 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cross_sum
+NumericMatrix cross_sum(NumericVector x);
+RcppExport SEXP _simona_cross_sum(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(cross_sum(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cross_multiply
+NumericMatrix cross_multiply(NumericVector x);
+RcppExport SEXP _simona_cross_multiply(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(cross_multiply(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cross_minus
+NumericMatrix cross_minus(NumericVector x);
+RcppExport SEXP _simona_cross_minus(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(cross_minus(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cross_max
+NumericMatrix cross_max(NumericVector x);
+RcppExport SEXP _simona_cross_max(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(cross_max(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cross_min
+NumericMatrix cross_min(NumericVector x);
+RcppExport SEXP _simona_cross_min(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(cross_min(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_simona_cpp_n_annotations", (DL_FUNC) &_simona_cpp_n_annotations, 2},
@@ -1027,6 +1082,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_simona_cpp_mark_tree_links", (DL_FUNC) &_simona_cpp_mark_tree_links, 1},
     {"_simona_cpp_tree_lt_parents_from_children", (DL_FUNC) &_simona_cpp_tree_lt_parents_from_children, 1},
     {"_simona_cpp_match_index", (DL_FUNC) &_simona_cpp_match_index, 2},
+    {"_simona_cross_sum", (DL_FUNC) &_simona_cross_sum, 1},
+    {"_simona_cross_multiply", (DL_FUNC) &_simona_cross_multiply, 1},
+    {"_simona_cross_minus", (DL_FUNC) &_simona_cross_minus, 1},
+    {"_simona_cross_max", (DL_FUNC) &_simona_cross_max, 1},
+    {"_simona_cross_min", (DL_FUNC) &_simona_cross_min, 1},
     {NULL, NULL, 0}
 };
 

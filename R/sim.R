@@ -39,7 +39,7 @@ Sim_Lin_1998 = function(dag, terms, IC_method = "IC_annotation", verbose = simon
 
 	ic_mica = MICA_IC(dag, id, IC_method, verbose = verbose)
 
-	sim = 2*ic_mica/outer(ic, ic, "+")
+	sim = 2*ic_mica/cross_sum(ic)
 	sim[is.na(sim)] = 1
 	dimnames(sim) = list(dag@terms[id], dag@terms[id])
 	
@@ -119,7 +119,7 @@ Sim_Resnik_1999 = function(dag, terms, norm_method = "Nmax", verbose = simona_op
 	} else if(norm_method == "Nmax") {
 		sim = ic_mica/max(ic)
 	} else if(norm_method == "Nunivers") {
-		sim = ic_mica/(outer(ic, ic, pmax))
+		sim = ic_mica/cross_max(ic)
 	} else  if(norm_method == "none") {
 		sim = ic_mica
 	}
@@ -166,7 +166,7 @@ Sim_FaITH_2010 = function(dag, terms, IC_method = "IC_annotation", verbose = sim
 
 	ic_mica = MICA_IC(dag, id, IC_method, verbose = verbose)
 
-	sim = ic_mica/(outer(ic, ic, "+") - ic_mica)
+	sim = ic_mica/(cross_sum(ic) - ic_mica)
 	dimnames(sim) = list(dag@terms[id], dag@terms[id])
 	
 	sim[is.na(sim)] = 1
@@ -210,7 +210,7 @@ Sim_Relevance_2006 = function(dag, terms, IC_method = "IC_annotation", verbose =
 
 	ic_mica = MICA_IC(dag, id, IC_method, verbose = verbose)
 
-	sim = 2*ic_mica/outer(ic, ic, "+")
+	sim = 2*ic_mica/cross_sum(ic)
 	sim[is.na(sim)] = 1
 	dimnames(sim) = list(dag@terms[id], dag@terms[id])
 
@@ -259,7 +259,7 @@ Sim_SimIC_2010 = function(dag, terms, IC_method = "IC_annotation", verbose = sim
 
 	ic_mica = MICA_IC(dag, id, IC_method, verbose = verbose)
 
-	sim = 2*ic_mica/outer(ic, ic, "+")
+	sim = 2*ic_mica/cross_sum(ic)
 	sim[is.na(sim)] = 1
 	dimnames(sim) = list(dag@terms[id], dag@terms[id])
 
@@ -309,7 +309,7 @@ Sim_XGraSM_2013 = function(dag, terms, IC_method = "IC_annotation", verbose = si
 		cpp_common_ancestor_mean_IC_XGraSM(dag, id, ic)
 	}, verbose = verbose)
 
-	sim = mean_ic/outer(ic[id], ic[id], "+")*2
+	sim = mean_ic/cross_sum(ic[id])*2
 	sim[is.na(sim)] = 0
 	dimnames(sim) = list(dag@terms[id], dag@terms[id])
 
@@ -352,7 +352,7 @@ Sim_EISI_2015 = function(dag, terms, IC_method = "IC_annotation", verbose = simo
 		cpp_common_ancestor_mean_IC_EISI(dag, id, ic)
 	}, verbose = verbose)
 
-	sim = mean_ic/outer(ic[id], ic[id], "+")*2
+	sim = mean_ic/cross_sum(ic[id])*2
 	sim[is.na(sim)] = 0
 	dimnames(sim) = list(dag@terms[id], dag@terms[id])
 
@@ -438,7 +438,7 @@ Sim_Zhang_2006 = function(dag, terms, verbose = simona_opt$verbose) {
 
 	ic_mica = MICA_IC(dag, id, IC_method, verbose = verbose)
 	
-	sim = 2*ic_mica/outer(ic, ic, "+")
+	sim = 2*ic_mica/cross_sum(ic)
 	
 	dimnames(sim) = list(dag@terms[id], dag@terms[id])
 	
@@ -471,7 +471,7 @@ Sim_universal = function(dag, terms, verbose = simona_opt$verbose) {
 
 	ic_mica = MICA_IC(dag, id, IC_method, verbose = verbose)
 
-	sim = 2*ic_mica/outer(ic, ic, pmax)
+	sim = 2*ic_mica/cross_max(ic)
 	dimnames(sim) = list(dag@terms[id], dag@terms[id])
 	
 	sim
@@ -1015,7 +1015,7 @@ Sim_Stojanovic_2001 = function(dag, terms, verbose = simona_opt$verbose) {
 	lca_term = max_ancestor_id(dag, id, depth, in_labels = FALSE, verbose = verbose)
 	lca_depth = structure(depth[lca_term], dim = dim(lca_term))
 	
-	sim = lca_depth/(outer(depth[id], depth[id], "+") - lca_depth)
+	sim = lca_depth/(cross_sum(depth[id]) - lca_depth)
 	dimnames(sim) = list(dag@terms[id], dag@terms[id])
 
 	sim
@@ -1111,7 +1111,7 @@ Sim_Zhong_2002 = function(dag, terms, depth_via_LCA = TRUE, verbose = simona_opt
 
 	if(!depth_via_LCA) {
 		d = dag_depth(dag)
-		sim = 1 - ( 2^(-LCA_depth(dag, id, verbose = verbose)) - 0.5*outer(2^(-d[id]), 2^(-d[id]), "+") )
+		sim = 1 - ( 2^(-LCA_depth(dag, id, verbose = verbose)) - 0.5*cross_sum(2^(-d[id])) )
 	} else {
 		sim = cpp_sim_zhong(dag, id, depth_via_LCA)
 	}
@@ -1292,7 +1292,7 @@ Sim_RSS_2013 = function(dag, terms, distance = "longest_distances_via_LCA", verb
 		stop("`distance` can only be in 'shortest_distances_via_NCA' or 'longest_distances_via_LCA'.")
 	}
 
-	sim = max_depth/(max_depth + dsp) * lca_depth/(lca_depth + outer(height, height, pmin) + 1)
+	sim = max_depth/(max_depth + dsp) * lca_depth/(lca_depth + cross_min(height) + 1)
 	dimnames(sim) = list(dag@terms[id], dag@terms[id])
 
 	sim
@@ -1363,9 +1363,9 @@ Sim_HRSS_2013 = function(dag, terms, verbose = simona_opt$verbose) {
 
 	alpha = abs(ic[dag@root] - ic_mica)
 	ic_dist_leaf = abs(ic[id] - ic[MIL_term])
-	beta = outer(ic_dist_leaf, ic_dist_leaf, "+")/2
+	beta = cross_sum(ic_dist_leaf)/2
 
-	sim = 1/(1 + abs(outer(ic[id], ic[id], "-")))*alpha/(alpha + beta + 1)
+	sim = 1/(1 + abs(cross_minus(ic[id])))*alpha/(alpha + beta + 1)
 	dimnames(sim) = list(dag@terms[id], dag@terms[id])
 
 	sim
@@ -1515,7 +1515,7 @@ Sim_Jiang_1997 = function(dag, terms, IC_method = "IC_annotation", norm_method =
 	max_ic = max(ic, na.rm = TRUE)  # IC_annotation generates NA
 	ic = ic[id]
 
-	dist = outer(ic, ic, "+") - 2*ic_mica
+	dist = cross_sum(ic) - 2*ic_mica
 	if(norm_method == "max") {
 		sim = 1 - dist/2/max_ic
 	} else if(norm_method == "Couto") {
@@ -1523,11 +1523,11 @@ Sim_Jiang_1997 = function(dag, terms, IC_method = "IC_annotation", norm_method =
 		sim[sim > 1] = 1
 		sim = 1 - sim
 	} else if(norm_method == "Lin") {
-		sim = 2*ic_mica/outer(ic, ic, "+")
+		sim = 2*ic_mica/cross_sum(ic)
 	} else if(norm_method == "Garla") {
 		sim = 1 - log(dist + 1)/log(2*max_ic + 1)
 	} else if(norm_method == "log-Lin") {
-		sim = 1 - log(dist + 1)/log(outer(ic, ic, "+") + 1)
+		sim = 1 - log(dist + 1)/log(cross_sum(ic) + 1)
 	} else if(norm_method == "Rada") {
 		sim = 1/(1 + dist)
 	} else {
@@ -1708,14 +1708,14 @@ kappa_dist = function(m) {
 	oab = proxyC::simil(m, method = "simple matching")
 	m1 = Matrix::rowSums(m)
 	m2 = abs(Matrix::rowSums(m - 1))
-	aab = (outer(m1, m1) + outer(m2, m2))/tab/tab
+	aab = (cross_multiply(m1) + cross_multiply(m2))/tab/tab
 	k = (oab - aab)/(1 - aab)
 	return(k)
 }
 
 overlap_dist = function(m) {
 	n = Matrix::rowSums(m)
-	proxyC::simil(m, method = "dice")*outer(n, n, "+")/2/outer(n, n, pmin)
+	proxyC::simil(m, method = "dice")*cross_sum(n)/2/cross_min(n)
 }
 
 ##############

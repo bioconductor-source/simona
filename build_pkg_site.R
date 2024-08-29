@@ -36,4 +36,4 @@ writeLines(ln, ".Rbuildignore")
 
 
 options(rmarkdown.html_vignette.check_title = FALSE)
-pkgdown::build_site(run_dont_run = TRUE)
+pkgdown::build_site(run_dont_run = TRUE, install = FALSE, new_process = FALSE)

@@ -293,6 +293,7 @@ process_obo_stanza = function(ln, relation_type = "part_of") {
 
 	lt$relationship = character(0)
 	i = grep("^is_a:", ln)
+	i = i[!grepl("gci_(filter|relation)", ln[i])] # https://github.com/jokergoo/simona/issues/8
 	if(length(i)) {
 		is_a = gsub("^is_a: (\\S+)\\b.*$", "\\1", ln[i])
 		is_a = unique(is_a)

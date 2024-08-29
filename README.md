@@ -1,4 +1,4 @@
-# simona: Semantic Similarity in Bio-Ontologies
+# simona: Semantic Similarity on Bio-Ontologies
 
 
 ## Introduction
@@ -15,8 +15,7 @@ Bioinformatics 2017"](https://doi.org/10.1093/bib/bbw067).
 
 ## Citation
 
-simona: a Comprehensive R package for Semantic Similarity Analysis on Bio-Ontologies
-Z Gu - bioRxiv, 2023. https://doi.org/10.1101/2023.12.03.569758
+Zuguang Gu. simona: a comprehensive R package for semantic similarity analysis on bio-ontologies. bioRxiv, 2023. https://doi.org/10.1101/2023.12.03.569758
 
 ## Install
 
@@ -85,7 +84,7 @@ With the following columns in the metadata data frame:
 Import from an `.obo` file:
 
 ```r
-dag = import_obo("https://raw.githubusercontent.com/Planteome/plant-ontology/master/po.obo")
+dag = import_obo("https://purl.obolibrary.org/obo/po.obo")
 dag
 ```
 
@@ -159,21 +158,8 @@ dag_circular_viz(dag, highlight = sig_go_ids, reorder_level = 3,
   legend_labels_from = "name")
 ```
 
-![image](https://github.com/jokergoo/simona/assets/449218/ada30534-182e-4513-93bf-9819e84b8604)
+![](https://github.com/jokergoo/simona/assets/449218/ada30534-182e-4513-93bf-9819e84b8604)
 
-
-## Vignettes
-
-- [01. ontology_DAG: a class for ontology data](https://jokergoo.github.io/simona/articles/v01_dag.html)
-- [02. Gene Ontology](https://jokergoo.github.io/simona/articles/v02_GO.html)
-- [03. Import ontology files](https://jokergoo.github.io/simona/articles/v03_import.html)
-- [04. Information content](https://jokergoo.github.io/simona/articles/v04_information_content.html)
-- [05. Term similarity](https://jokergoo.github.io/simona/articles/v05_term_similarity.html)
-- [06. Similarity between two groups of terms](https://jokergoo.github.io/simona/articles/v06_group_similarity.html)
-- [07. Visualize DAGs](https://jokergoo.github.io/simona/articles/v07_dag_visualization.html)
-- [08. Random DAGs](https://jokergoo.github.io/simona/articles/v08_random.html)
-- [09. Shiny app](https://jokergoo.github.io/simona/articles/v09_shiny.html)
-- [10. Functional enrichment](https://jokergoo.github.io/simona/articles/v10_enrichment.html)
 
 ## License
 
