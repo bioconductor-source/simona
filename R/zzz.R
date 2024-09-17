@@ -11,7 +11,7 @@ Documentation: https://jokergoo.github.io/simona/
 
 If you use it in published research, please cite:
 Gu, Z. simona: a Comprehensive R package for Semantic Similarity 
-  Analysis on Bio-Ontologies. bioRxiv 2023.
+  Analysis on Bio-Ontologies. BMC Genomics, 2024.
 
 This message can be suppressed by:
   suppressPackageStartupMessages(library(simona))
