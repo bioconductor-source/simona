@@ -1,5 +1,5 @@
 ---
-title: "Similarity between two groups of terms"
+title: "Group similarity"
 author: "Zuguang Gu ( z.gu@dkfz.de )"
 date: '`r Sys.Date()`'
 output: html_vignette

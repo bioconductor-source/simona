@@ -1,0 +1,17 @@
+citHeader("The methods within the code package can be cited as:")
+
+citEntry(
+   entry = "article",
+   title = "simona: a comprehensive R package for semantic similarity analysis on bio-ontologies",
+   author = "Zuguang Gu",
+   journal = "BMC Genomics",
+   year = 2024,
+   doi = "10.1186/s12864-024-10759-4",
+   textVersion = "Gu, Z. (2024) simona: a comprehensive R package for semantic similarity analysis on bio-ontologies. BMC Genomics"
+)
+
+citFooter("This free open-source software implements academic
+research by the authors and co-workers. If you use it,
+please support the project by citing the appropriate
+journal articles.")
+

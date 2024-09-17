@@ -15,7 +15,7 @@ navbar:
           href: articles/v04_information_content.html
         - text: "5.Term similarity"
           href: articles/v05_term_similarity.html
-        - text: "6.Similarity between two groups of terms"
+        - text: "6.Group similarity"
           href: articles/v06_group_similarity.html
         - text: "7.Visualize DAGs"
           href: articles/v07_dag_visualization.html
@@ -33,6 +33,3 @@ navbar:
       href: https://jokergoo.github.io/simona_supplementary/suppl6_OBOFoundry_gallery/OBOFoundry_viz.html
 
 
-template:
-  includes:
-    after_body: "<style>nav[data-toggle='toc'] .nav .nav {display: block;}</style>"
