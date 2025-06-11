@@ -525,3 +525,27 @@ dag_distinct_ancestors = function(dag, terms, in_labels = TRUE, verbose = simona
 }
 
 
+#' Test whether terms have offspring/ancestors relations
+#' 
+#' @param dag An `ontology_DAG` object.
+#' @param offspring A vector of term names.
+#' @param ancestors A vector of term names. At lease one of `offspring` and `ancestors` should have length of 1.
+#' @param include_self Whether to also include the query term itself.
+#' @export
+#' @import fastmatch
+#' @return A logical vector.
+dag_is_offspring = function(dag, offspring, ancestors, include_self = TRUE) {
+	if(length(offspring) == 1) {
+		ancestors %fin% dag_ancestors(dag, offspring, include_self = include_self)
+	} else if(length(ancestors) == 1) {
+		offspring %fin% dag_offspring(dag, ancestors, include_self = include_self)
+	} else if(length(offspring) > 1 && length(ancestors) > 1) {
+		stop("At lease one of `offspring` and `ancestors` should have length of 1.")
+	}
+}
+
+#' @rdname dag_is_offspring
+#' @export
+dag_is_ancestor = function(dag, ancestors, offspring, include_self = TRUE) {
+	dag_is_offspring(dag, offspring, ancestors, include_self = include_self)
+}

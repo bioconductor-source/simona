@@ -517,6 +517,7 @@ default_edge_param = list(
 #'        The full set of parameters can be found at \url{https://graphviz.org/docs/edges/}.
 #'     If the parameter is set to a named vector, it can be named by relation types `c("is_a" = ...)`,
 #'     or directly relations `c("a -> b" = ...)`. Please see the vignette for details.
+#' @param rankdir The direction of the layout. Only four values are allowed: `"TB"`, `"LR"`, `"BT"` and `"RL"`.
 #'
 #' @seealso \url{http://magjac.com/graphviz-visual-editor/} is nice place to try the DOT code.
 #' @details `dag_as_DOT()` generates the DOT code of the DAG.
@@ -526,7 +527,7 @@ default_edge_param = list(
 #' `dag_as_DOT()` returns a vector of DOT code.
 #' @rdname dag_viz
 dag_as_DOT = function(dag, node_param = default_node_param,
-	edge_param = default_edge_param) {
+	edge_param = default_edge_param, rankdir = c("TB", "LR", "BT", "RL")) {
 
 	for(nm in names(default_node_param)) {
 		if(is.null(node_param[[nm]])) {
@@ -620,9 +621,13 @@ dag_as_DOT = function(dag, node_param = default_node_param,
 		edges = c(edges, "  ];")
 	}
 
+	rankdir = match.arg(rankdir)[1]
 	DOT = c(
 		"digraph {",
-		"  graph [overlap = true]",
+		"  graph [",
+	 qq("    rankdir = \"@{rankdir}\","),
+		"    overlap = true",
+		"  ]",
 		"",
 		nodes,
 		"",
@@ -665,7 +670,8 @@ print.print_source = function(x, ...) {
 #' dag_as_DOT(dag[, "GO:0010228"])
 #' }
 dag_graphviz = function(dag, 
-	node_param = default_node_param, edge_param = default_edge_param, ...) {
+	node_param = default_node_param, edge_param = default_edge_param, 
+	rankdir = "TB", ...) {
 
 	if(dag@n_terms > 100) {
 		warning("graphviz is only efficient for visualizing small graphs.")
@@ -675,7 +681,7 @@ dag_graphviz = function(dag,
 	}
 	check_pkg("DiagrammeR", bioc = FALSE)
 
-	dot = dag_as_DOT(dag, node_param = node_param, edge_param = edge_param)
+	dot = dag_as_DOT(dag, node_param = node_param, edge_param = edge_param, rankdir = rankdir)
 	DiagrammeR::grViz(dot, ...)
 }
 

@@ -8,6 +8,7 @@
 \alias{ontology_rdo}
 \alias{ontology_vt}
 \alias{ontology_go}
+\alias{ontology_reactome}
 \title{Import ontologies already having gene annotations}
 \usage{
 ontology_kw(
@@ -53,6 +54,13 @@ ontology_vt(
 )
 
 ontology_go(...)
+
+ontology_reactome(
+  organism = "HSA",
+  gene_annotation = TRUE,
+  verbose = simona_opt$verbose,
+  ...
+)
 }
 \arguments{
 \item{organism}{Organism.}
@@ -80,4 +88,10 @@ There are the following ontologies:
 The source of the original files can be found with \code{simona:::RGD_TB}.
 
 \code{ontology_go()} is an alias of \code{\link[=create_ontology_DAG_from_GO_db]{create_ontology_DAG_from_GO_db()}}. All arguments go there.
+
+Valid values for \code{organism} argument in \code{ontology_reactome()} are
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{c("BTA", "CEL", "CFA", "DRE", "DDI", "DME", "GGA", "HSA", "MMU", 
+  "MTU", "PFA", "RNO", "SCE", "SPO", "SSC", "XTR")
+}\if{html}{\out{</div>}}
 }

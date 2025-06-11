@@ -215,3 +215,24 @@ test_that("test dag_distinct_ancestors", {
 		c("a")
 	)
 })
+
+
+test_that("test dag_is_offspring", {
+	expect_equal(dag_is_ancestor(dag, "a", "c"), TRUE)
+	expect_equal(dag_is_ancestor(dag, "a", "d"), TRUE)
+	expect_equal(dag_is_ancestor(dag, "a", "a"), TRUE)
+	expect_equal(dag_is_ancestor(dag, "a", "a", include_self = FALSE), FALSE)
+	expect_equal(dag_is_ancestor(dag, "b", c("a", "b", "c", "d")), c(FALSE, TRUE, TRUE, TRUE))
+	expect_equal(dag_is_ancestor(dag, c("a", "b", "c", "d"), "b"), c(TRUE, TRUE, FALSE, FALSE))
+
+	expect_equal(dag_is_ancestor(dag, "a", "c"), dag_is_offspring(dag, "c", "a"))
+	expect_equal(dag_is_ancestor(dag, "b", c("a", "b", "c", "d")), dag_is_offspring(dag, c("a", "b", "c", "d"), "b"))
+	expect_equal(dag_is_ancestor(dag, c("a", "b", "c", "d"), "b"), dag_is_offspring(dag, "b", c("a", "b", "c", "d")))
+
+	expect_error(dag_is_ancestor(dag, c("a", "b"), c("c", "d")))
+	expect_error(dag_is_offspring(dag, c("a", "b"), c("c", "d")))
+
+})
+
+
+

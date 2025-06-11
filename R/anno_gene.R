@@ -299,3 +299,54 @@ ontology_vt = function(
 ontology_go = function(...) {
 	create_ontology_DAG_from_GO_db(...)
 }
+
+
+#' @rdname ontology
+#' @export
+#' @details
+#' Valid values for `organism` argument in `ontology_reactome()` are 
+#' 
+#' ```
+#' c("BTA", "CEL", "CFA", "DRE", "DDI", "DME", "GGA", "HSA", "MMU", 
+#'   "MTU", "PFA", "RNO", "SCE", "SPO", "SSC", "XTR")
+#' ```
+#' 
+ontology_reactome = function(
+	organism = "HSA",
+	gene_annotation = TRUE,
+	verbose = simona_opt$verbose, ...) {
+
+	if(!organism %in% c("BTA", "CEL", "CFA", "DRE", "DDI", "DME", "GGA", "HSA", "MMU", 
+                        "MTU", "PFA", "RNO", "SCE", "SPO", "SSC", "XTR")) {
+        stop("Specified organism is not support.")
+    }
+
+    if(verbose) {
+		message("Downloading pathway name file from https://reactome.org/download/current/ReactomePathways.txt...")
+	}
+    tb = read.table(url("https://reactome.org/download/current/ReactomePathways.txt"), sep = "\t", comment.char = "", quote = "")
+    tb = tb[grepl(organism, tb[, 1]), ]
+    pathway_names = structure(tb[, 2], names = tb[, 1])
+
+    if(verbose) {
+		message("Downloading parent-child relation file from https://reactome.org/download/current/ReactomePathwaysRelation.txt...")
+	}
+    df = read.table(url("https://reactome.org/download/current/ReactomePathwaysRelation.txt"), sep = "\t")
+    df = df[grepl(organism, df[, 1]) & grepl(organism, df[, 2]), ]
+    dag = create_ontology_DAG(df[, 1], df[, 2])
+    mcols(dag, "name") = pathway_names[dag_all_terms(dag)]
+
+    if(gene_annotation) {
+	    if(verbose) {
+			message("Downloading annotation file from https://reactome.org/download/current/NCBI2Reactome.txt...")
+		}
+	    tb = read.table(url("https://reactome.org/download/current/NCBI2Reactome.txt"), sep = "\t", comment.char = "", quote = "")
+	    tb2 = tb[grepl(organism, tb[, 2]), ]
+	    gs = split(tb2[, 1], tb2[, 2])
+	    gs = lapply(gs, function(x) unique(as.character(x)))
+	    
+	    dag = add_annotation(dag, gs)
+	}
+	dag
+}
+

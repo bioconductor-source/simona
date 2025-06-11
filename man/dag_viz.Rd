@@ -29,13 +29,15 @@ dag_circular_viz(
 dag_as_DOT(
   dag,
   node_param = default_node_param,
-  edge_param = default_edge_param
+  edge_param = default_edge_param,
+  rankdir = c("TB", "LR", "BT", "RL")
 )
 
 dag_graphviz(
   dag,
   node_param = default_node_param,
   edge_param = default_edge_param,
+  rankdir = "TB",
   ...
 )
 }
@@ -89,6 +91,8 @@ scalar, or a named vector that contains a subset of terms that need to be custom
 The full set of parameters can be found at \url{https://graphviz.org/docs/edges/}.
 If the parameter is set to a named vector, it can be named by relation types \code{c("is_a" = ...)},
 or directly relations \code{c("a -> b" = ...)}. Please see the vignette for details.}
+
+\item{rankdir}{The direction of the layout. Only four values are allowed: \code{"TB"}, \code{"LR"}, \code{"BT"} and \code{"RL"}.}
 
 \item{...}{Pass to \code{\link[DiagrammeR:grViz]{DiagrammeR::grViz()}}.}
 }
